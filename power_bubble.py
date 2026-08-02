@@ -79,11 +79,16 @@ def power_intensity_bubble(df):
         textfont=dict(size=13),
     )
     fig.update_layout(
-        title=dict(text="Power-sector carbon intensity vs. emissions "
-                        "(bubble = manufacturing % of GDP)",
+        title=dict(text="Grid Carbon Intensity vs Total Power Sector Emissions",
                    x=0.5, xanchor="center", y=0.97, yanchor="top"),
         showlegend=False,                         # <-- turn the legend off
-        margin=dict(t=110),
+        margin=dict(t=120),
+    )
+    fig.add_annotation(
+        text="Bubble size = Manufacturing Value Added (% of GDP)",
+        x=0.5, y=1.06, xref="paper", yref="paper",
+        xanchor="center", yanchor="bottom", showarrow=False,
+        font=dict(size=15, color="#555555"),
     )
     return fig
 
