@@ -11,24 +11,22 @@ import os
 import webbrowser
 
 from data_prep import prepare
-from plots import (
-    gdp_vs_intensity,
+from chart_definitions import (
     gdp_vs_intensity_grid,
-    manufacturing_share,
+    manufacturing_share_refined,
     save,
 )
 
-DATA = "combined_tidy_panel_ICUE.csv"
+DATA = "data/combined_tidy_panel_ICUE.csv"
 
 
 def main():
     df = prepare(DATA)
 
     charts = {
-        "gdp_vs_intensity.html": gdp_vs_intensity(df),
         "gdp_vs_intensity_grid.html": gdp_vs_intensity_grid(df),
         "gdp_vs_intensity_grid_independent.html": gdp_vs_intensity_grid(df, shared_scale=False),
-        "manufacturing_share.html": manufacturing_share(df),
+        "manufacturing_share.html": manufacturing_share_refined(df),
     }
 
     for name, fig in charts.items():

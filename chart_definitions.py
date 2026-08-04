@@ -2,6 +2,68 @@
 import colorsys
 import plotly.io as pio
 
+# Shared theme + global font. Setting the font on the default template applies
+# it to every figure (titles, axes, legend, hover) without repeating it per
+# chart. The sans-serif fallback covers viewers without Calibri installed.
+FONT_FAMILY = "Calibri, sans-serif"
+pio.templates.default = "plotly_white"
+pio.templates["plotly_white"].layout.font.family = FONT_FAMILY
+pio.templates["plotly_white"].layout.font.weight = "bold"
+# Keep the tick numbers/labels on the axes at normal weight (bold ticks read as
+# clutter). Set on the template so it covers every axis in every subplot.
+pio.templates["plotly_white"].layout.xaxis.tickfont.weight = "normal"
+pio.templates["plotly_white"].layout.yaxis.tickfont.weight = "normal"
+pio.templates["plotly_white"].layout.legend.font.size = 16
+COUNTRY_ORDER = ["China", "United States", "EU", "India"]
+COUNTRY_COLORS = {
+    "China": "#c0392b",
+    "United States": "#2c3e50",
+    "EU": "#2980b9",
+    "India": "#e67e22",
+}
+
+# Indicator names used by the chart functions below.
+GDP_IND = "GDP (constant 2015 US$)"
+INTENSITY_IND = "Carbon intensity of GDP (kg CO2e per constant 2015 US$ of GDP)"
+MFG_SHARE_IND = "Manufacturing, value added (% of GDP)"
+
+# Every chart uses one hue: translucent bars with a darker, more saturated line
+# of the same hue on top. BAR_OPACITY sets the bar translucency; _darken()
+# derives the line shade. GRID_COLOR is the single base hue for the grid.
+BAR_OPACITY = 0.45
+GRID_COLOR = "#4c78a8"
+
+# --- Manufacturing branch composition from the WDI extract  ---
+MVA_BRANCHES = {
+    "Chemicals (% of value added in manufacturing)": "Chemicals",
+    "Food, beverages and tobacco (% of value added in manufacturing)": "Food, bev. & tobacco",
+    "Machinery and transport equipment (% of value added in manufacturing)": "Machinery & transport",
+    "Textiles and clothing (% of value added in manufacturing)": "Textiles & clothing",
+    "Other manufacturing (% of value added in manufacturing)": "Other manufacturing",
+}
+MVA_BRANCH_COLORS = {
+    "Chemicals": "#4c78a8",
+    "Food, bev. & tobacco": "#f58518",
+    "Machinery & transport": "#54a24b",
+    "Textiles & clothing": "#e45756",
+    "Other manufacturing": "#b3aca6",
+}
+MVA_BRANCH_ORDER = list(MVA_BRANCH_COLORS)
+
+FUEL_ORDER = ["Coal", "Gas", "Nuclear", "Hydro",
+              "Bioenergy", "Wind", "Solar"]
+FUEL_COLORS = {
+    "Coal": "#33322f", "Gas": "#d1603d",
+    "Nuclear": "#a05eb5", "Hydro": "#2b7bba", "Bioenergy": "#5a8f3c",
+    "Wind": "#4bb3c4", "Solar": "#f4c430",
+}
+
+MVA_LEVEL_IND = "Manufacturing, value added (constant 2015 US$)"
+MFG_INTENSITY_IND = ("Carbon dioxide emissions from manufacturing industries per unit "
+                     "of manufacturing value added (kilogrammes of CO2 per constant "
+                     "2020 United States dollars)")
+
+
 def _darken(hex_color, sat=1.3, val=0.7):
     """Return a darker, more saturated variant of a hex color.
 
@@ -161,7 +223,7 @@ def manufacturing_share_refined(df, countries=None):
                      range=[0, ymax + pad], dtick=5, tick0=0)
     return fig
 
-def mva_branch_bars(path, years=(1990, 2000, 2019),
+def mva_branch_bars(path="data/MVA_Cont.xlsx", years=(1990, 2000, 2019),
                     countries=("China", "India", "United States")):
     """Stacked-bar manufacturing mix from the WDI extract, one panel per country.
 
@@ -172,7 +234,7 @@ def mva_branch_bars(path, years=(1990, 2000, 2019),
     import pandas as pd
     import plotly.express as px
 
-    raw = pd.read_excel(r"C:\Users\dsalian\OneDrive - rff\Desktop\mfg_ems_project\MVA_Cont.xlsx", sheet_name="Data")
+    raw = pd.read_excel(path, sheet_name="Data")
     raw = raw[raw["Series Name"].isin(MVA_BRANCHES)
               & raw["Country Name"].isin(countries)].copy()
     ycols = [c for c in raw.columns if "YR" in str(c)]
@@ -265,6 +327,12 @@ def mfg_decoupling_grid(df, countries=None, shared_scale=True):
     shared_scale=True (default) puts every panel on one uniform y-axis for
     comparison; False lets each panel autoscale to its own data.
     """
+
+    """United Nations Industrial Development Organization (UNIDO). 
+    Carbon dioxide emissions from manufacturing industries per unit of manufacturing value added (kilogrammes of CO₂ per constant 2020 United States dollars) 
+    [SDG Indicator 9.4.1]. 
+    UN SDG Global Database, custodian agencies IEA and UNIDO. 
+    Accessed [your date]. https://unstats.un.org/sdgs/dataportal"""
     import pandas as pd
     from plotly.subplots import make_subplots
     countries = countries or COUNTRY_ORDER
@@ -323,13 +391,13 @@ def mfg_decoupling_grid(df, countries=None, shared_scale=True):
     fig.update_layout(
         title=dict(text="Manufacturing Emissions Decoupling",
                    x=0.5, xanchor="center", y=0.97, yanchor="top"),
-        legend=dict(orientation="h", yanchor="bottom", y=1.10, x=0.5, xanchor="center"),
-        margin=dict(t=150), hovermode="x unified",
+        legend=dict(orientation="h", yanchor="bottom", y=1.28, x=0.5, xanchor="center"),
+        margin=dict(t=195), hovermode="x unified",
         hoverlabel=dict(font_size=11),
     )
     fig.add_annotation(
         text=f"Index: Year {int(year_min)} = 100",
-        x=0.5, y=1.06, xref="paper", yref="paper",
+        x=0.5, y=1.23, xref="paper", yref="paper",
         xanchor="center", yanchor="bottom", showarrow=False,
         font=dict(size=12, color="#666666"),
     )

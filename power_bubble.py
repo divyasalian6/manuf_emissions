@@ -35,7 +35,7 @@ COUNTRY_COLORS = {
     "EU": "#2980b9",
     "India": "#e67e22",
 }
-DATA = "combined_tidy_panel_ICUE.csv"
+DATA = "data/combined_tidy_panel_ICUE.csv"
 
 
 def save(fig, path):

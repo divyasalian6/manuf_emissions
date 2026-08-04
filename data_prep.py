@@ -68,8 +68,8 @@ def prepare(path: str) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    raw = load_panel("combined_tidy_panel_ICUE.csv")
-    clean = prepare("combined_tidy_panel_ICUE.csv")
+    raw = load_panel("data/combined_tidy_panel_ICUE.csv")
+    clean = prepare("data/combined_tidy_panel_ICUE.csv")
 
     print(f"Missing units: {raw['unit'].isna().sum()} -> {clean['unit'].isna().sum()}")
     print(f"Country labels: {raw['country'].nunique()} -> {clean['country'].nunique()}")
