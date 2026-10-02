@@ -5,7 +5,6 @@ Run this from the project folder (with the venv active):
     python make_charts.py
 
 It cleans the data once, then writes one self-contained HTML file per chart.
-Add a new chart by importing its function and adding one save(...) line below.
 """
 import os
 import webbrowser
@@ -17,11 +16,13 @@ from chart_definitions import (
     save,
 )
 
-DATA = "data/combined_tidy_panel_ICUE.csv"
+DATA = "data/combined_tidy_panel_ICUE.xlsx"
+PLOTS_DIR = "plots"
 
 
 def main():
     df = prepare(DATA)
+    os.makedirs(PLOTS_DIR, exist_ok=True)
 
     charts = {
         "gdp_vs_intensity_grid.html": gdp_vs_intensity_grid(df),
@@ -30,12 +31,12 @@ def main():
     }
 
     for name, fig in charts.items():
-        path = os.path.abspath(name)
+        path = os.path.abspath(os.path.join(PLOTS_DIR, name))
         save(fig, path)
         print(">>> Saved:", path)
 
     # Open the last one in the browser so you get a quick visual check.
-    webbrowser.open("file://" + os.path.abspath(list(charts)[-1]))
+    webbrowser.open("file://" + os.path.abspath(os.path.join(PLOTS_DIR, list(charts)[-1])))
 
 
 if __name__ == "__main__":

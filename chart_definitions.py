@@ -230,7 +230,7 @@ def mva_branch_bars(path="data/MVA_Cont.xlsx", years=(1990, 2000, 2019),
     Reads the WDI Excel export, keeps the five branch categories (which sum to
     100% of MVA), and draws one 100% stacked bar per snapshot year. Only China,
     India and the US have branch data; China's series ends at 2019.
-    """
+    """ 
     import pandas as pd
     import plotly.express as px
 
@@ -368,7 +368,7 @@ def mfg_decoupling_grid(df, countries=None, shared_scale=True):
         fig.add_scatter(x=both.index, y=va_idx, name=" Manufacturing Value added", legendgroup="va",
                         mode="lines", line=dict(color=va_color, width=3), showlegend=legend,
                         hovertemplate="%{y:.0f}<extra>Value added</extra>", row=r, col=col)
-        fig.add_scatter(x=both.index, y=em_idx, name="Total Manufacturing Emissions", legendgroup="em",
+        fig.add_scatter(x=both.index, y=em_idx, name="Manufacturing Emissions (on-site combustion only)", legendgroup="em",
                         mode="lines", line=dict(color=em_color, width=3), showlegend=legend,
                         hovertemplate="%{y:.0f}<extra>Emissions</extra>", row=r, col=col)
         fig.add_hline(y=100, line=dict(color="grey", width=1, dash="dot"), row=r, col=col)

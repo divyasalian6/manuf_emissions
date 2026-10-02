@@ -2,19 +2,15 @@
 import re
 import pandas as pd
 
-# Captures the contents of the LAST "(...)" group in a string.
-# Anchoring to the end skips mid-name noise like "(CO2)" or "(Energy)".
 _TRAILING_PAREN = re.compile(r"\(([^()]*)\)\s*$")
 
-# Maps every observed country spelling to a canonical label. Edit the values
-# here (e.g. move "Europe" off "EU") if you want different groupings.
 COUNTRY_CANON = {
     "China": "China",
     "China, People's Republic of": "China",
     "EU": "EU",
-    "Europe": "EU",                      # unep_mfg_co2's label for the EU slot
+    "Europe": "EU",                      
     "European Union": "EU",
-    "Europeon Union": "EU",              # typo in imf_co2_embodied
+    "Europeon Union": "EU",              
     "India": "India",
     "United States": "United States",
     "United States of America": "United States",
@@ -22,8 +18,8 @@ COUNTRY_CANON = {
 
 
 def load_panel(path: str) -> pd.DataFrame:
-    """Load the tidy panel CSV."""
-    return pd.read_csv(path)
+    """Load the tidy panel workbook (first sheet)."""
+    return pd.read_excel(path)
 
 
 def backfill_units(df: pd.DataFrame) -> pd.DataFrame:
@@ -68,8 +64,8 @@ def prepare(path: str) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    raw = load_panel("data/combined_tidy_panel_ICUE.csv")
-    clean = prepare("data/combined_tidy_panel_ICUE.csv")
+    raw = load_panel("data/combined_tidy_panel_ICUE.xlsx")
+    clean = prepare("data/combined_tidy_panel_ICUE.xlsx")
 
     print(f"Missing units: {raw['unit'].isna().sum()} -> {clean['unit'].isna().sum()}")
     print(f"Country labels: {raw['country'].nunique()} -> {clean['country'].nunique()}")
